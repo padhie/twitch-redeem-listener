@@ -1,4 +1,4 @@
-.PHONY: run build update
+.PHONY: run build update install-autostart
 
 run:
 	./twitch-redeem-trigger
@@ -11,3 +11,8 @@ update:
 	go mod tidy
 	go mod download
 	go mod vendor
+
+install-autostart:
+	./service/install.sh
+	sudo systemctl start twitch-redeem
+	sudo systemctl enable twitch-redeem

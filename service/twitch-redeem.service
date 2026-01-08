@@ -1,0 +1,13 @@
+[Unit]
+Description=Twitch Redeem Trigger for Tapo
+After=network.target
+
+[Service]
+ExecStart={DIRECTORY}/twitch-redeem-trigger
+WorkingDirectory={DIRECTORY}
+Restart=always
+User={USER}
+EnvironmentFile={DIRECTORY}/.env
+
+[Install]
+WantedBy=multi-user.target
