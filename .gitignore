@@ -16,11 +16,14 @@ logs/
 *.swo
 *.iml
 
-# Docker
-.dockerignore
+# Local overwrites
+Makefile.local
 
 # OS
 .DS_Store
 Thumbs.db
 
+# Application Dependencies
 vendor
+
+dist/*

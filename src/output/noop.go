@@ -1,7 +1,7 @@
 package output
 
 import (
-	"twitch-redeem-trigger/logger"
+	"twitch-redeem-trigger/src/logger"
 )
 
 type NoopDevice struct {

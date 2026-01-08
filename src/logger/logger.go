@@ -7,7 +7,7 @@ import (
 	"os"
 	"path/filepath"
 
-	"twitch-redeem-trigger/config"
+	"twitch-redeem-trigger/src/config"
 )
 
 type Logger struct {

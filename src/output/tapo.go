@@ -6,8 +6,8 @@ import (
 	"fmt"
 	"net/http"
 	"time"
-	"twitch-redeem-trigger/config"
-	"twitch-redeem-trigger/logger"
+	"twitch-redeem-trigger/src/config"
+	"twitch-redeem-trigger/src/logger"
 )
 
 type Tapo struct {

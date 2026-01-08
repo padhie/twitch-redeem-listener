@@ -7,12 +7,12 @@ import (
 	"syscall"
 	"time"
 
-	"twitch-redeem-trigger/config"
-	"twitch-redeem-trigger/gpio"
-	"twitch-redeem-trigger/input/twitch"
-	"twitch-redeem-trigger/logger"
-	"twitch-redeem-trigger/output"
-	"twitch-redeem-trigger/web"
+	"twitch-redeem-trigger/src/config"
+	"twitch-redeem-trigger/src/gpio"
+	"twitch-redeem-trigger/src/input/twitch"
+	"twitch-redeem-trigger/src/logger"
+	"twitch-redeem-trigger/src/output"
+	"twitch-redeem-trigger/src/web"
 )
 
 func main() {

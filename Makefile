@@ -1,11 +1,12 @@
 .PHONY: run build update install-autostart
 
 run:
-	./twitch-redeem-trigger
+	./dist/twitch-redeem-trigger
 
 build:
-	rm twitch-redeem-trigger || true
-	go build -o twitch-redeem-trigger main.go
+	mkdir -p dist
+	rm -f dist/twitch-redeem-trigger
+	go build -o dist/twitch-redeem-trigger src/main.go
 
 update:
 	go mod tidy
@@ -16,3 +17,6 @@ install-autostart:
 	./service/install.sh
 	sudo systemctl start twitch-redeem
 	sudo systemctl enable twitch-redeem
+
+# local extensions
+-include Makefile.local

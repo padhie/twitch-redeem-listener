@@ -3,8 +3,8 @@ package output
 import (
 	"strings"
 
-	"twitch-redeem-trigger/config"
-	"twitch-redeem-trigger/logger"
+	"twitch-redeem-trigger/src/config"
+	"twitch-redeem-trigger/src/logger"
 )
 
 func Build(cfgOutput config.Output, l *logger.Logger) Device {

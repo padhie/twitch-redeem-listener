@@ -2,10 +2,10 @@ package web
 
 import (
 	"net/http"
-	"twitch-redeem-trigger/config"
-	"twitch-redeem-trigger/output"
+	"twitch-redeem-trigger/src/config"
+	"twitch-redeem-trigger/src/output"
 
-	"twitch-redeem-trigger/logger"
+	"twitch-redeem-trigger/src/logger"
 )
 
 func StartServer(cfgWeb config.Web, output output.Device, l *logger.Logger) error {

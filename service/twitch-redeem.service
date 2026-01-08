@@ -3,7 +3,7 @@ Description=Twitch Redeem Trigger for Tapo
 After=network.target
 
 [Service]
-ExecStart={DIRECTORY}/twitch-redeem-trigger
+ExecStart={DIRECTORY}/dist/twitch-redeem-trigger
 WorkingDirectory={DIRECTORY}
 Restart=always
 User={USER}
