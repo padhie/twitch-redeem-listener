@@ -1,0 +1,26 @@
+# Git
+.git
+.gitignore
+
+# Environment
+.env*
+
+# Logs
+logs/
+*.log
+
+# IDE
+.vscode/
+.idea/*
+*.swp
+*.swo
+*.iml
+
+# Docker
+.dockerignore
+
+# OS
+.DS_Store
+Thumbs.db
+
+vendor
