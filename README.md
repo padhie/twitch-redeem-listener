@@ -1,3 +1,5 @@
+# twitch-redeem listener
+
 ## Development (on raspberry pi)
 ### prepare system
 ```bash
