@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"log"
 	"os"
 	"os/signal"
@@ -16,10 +17,14 @@ import (
 )
 
 func main() {
+	// 0. Kommandozeilen-Argumente definieren
+	envFile := flag.String("env", ".env", "Path to the .env file")
+	flag.Parse()
+
 	// 1. Konfiguration laden
-	cfg, err := config.Load()
+	cfg, err := config.Load(*envFile)
 	if err != nil {
-		log.Fatalf("Failed to load config: %v", err)
+		log.Fatalf("Failed to load config (using %s): %v", *envFile, err)
 	}
 
 	// 2. Logger initialisieren

@@ -7,9 +7,14 @@ import (
 	"github.com/joho/godotenv"
 )
 
-func Load() (*Config, error) {
-	// Lade .env-Datei
-	if err := godotenv.Load(); err != nil {
+func Load(envFile string) (*Config, error) {
+	// Falls kein Pfad angegeben wurde, nutze Standard .env
+	if envFile == "" {
+		envFile = ".env"
+	}
+
+	// Lade angegebene env-Datei
+	if err := godotenv.Load(envFile); err != nil {
 		return nil, err
 	}
 
