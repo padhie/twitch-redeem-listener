@@ -26,4 +26,5 @@ Thumbs.db
 # Application Dependencies
 vendor
 
+asset/*
 dist/*

@@ -68,13 +68,11 @@ func initGpioTest(l *logger.Logger) {
 }
 
 func initWebServer(cfgWeb config.Web, device output.Device, l *logger.Logger) {
-	if cfgWeb.Enabled {
-		go func() {
-			if err := web.StartServer(cfgWeb, device, l); err != nil {
-				l.Error("Web server failed: %v", err)
-			}
-		}()
-	}
+	go func() {
+		if err := web.StartWebServer(cfgWeb, device, l); err != nil {
+			l.Error("Web server failed: %v", err)
+		}
+	}()
 }
 
 func initTwitch(cfgTwitch config.Twitch, l *logger.Logger, device output.Device) {
@@ -82,19 +80,21 @@ func initTwitch(cfgTwitch config.Twitch, l *logger.Logger, device output.Device)
 	go twitch.ListenForRedeems(cfgTwitch, l, redeemChan)
 
 	for event := range redeemChan {
-		l.Info("Received redeem: %s (User: %s)", event.RedeemName, event.User)
+		toggleInput := output.ToggleInput{
+			User:       event.User,
+			RedeemName: event.RedeemName,
+		}
+
+		l.Info("Received redeem: %s (User: %s)", toggleInput.RedeemName, toggleInput.User)
 
 		// LED für Redeem blinken lassen
 		go gpio.BlinkLED(gpio.RedeemLED, 3*time.Second)
 
 		// Tapo-Steckdose schalten
-		if err := device.Toggle(); err != nil {
+		if err := device.Toggle(toggleInput); err != nil {
 			l.Error("Failed to toggle Tapo device: %v", err)
 			// Neu starten (wie besprochen)
 			os.Exit(1)
 		}
-
-		// LED für Tapo blinken lassen
-		go gpio.BlinkLED(gpio.TapoLED, 3*time.Second)
 	}
 }

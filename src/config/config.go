@@ -3,6 +3,7 @@ package config
 import (
 	"os"
 	"strconv"
+	"strings"
 
 	"github.com/joho/godotenv"
 )
@@ -39,9 +40,14 @@ func Load(envFile string) (*Config, error) {
 		Output: Output{
 			Type: os.Getenv("OUTPUT_TYPE"),
 			Tapo: Tapo{
-				IP:       os.Getenv("TAPO_IP"),
-				Username: os.Getenv("TAPO_USERNAME"),
-				Password: os.Getenv("TAPO_PASSWORD"),
+				IP:          os.Getenv("TAPO_IP"),
+				Username:    os.Getenv("TAPO_USERNAME"),
+				Password:    os.Getenv("TAPO_PASSWORD"),
+				TriggerWord: os.Getenv("TAPO_TRIGGER_WORD"),
+			},
+			Media: Media{
+				Port:     getEnvInt("MEDIA_PORT", 0),
+				Mappings: parseMappings(),
 			},
 		},
 
@@ -59,6 +65,7 @@ func Load(envFile string) (*Config, error) {
 		Web: Web{
 			Enabled: getEnvBool("ENABLE_WEB_INTERFACE"),
 			Port:    os.Getenv("WEB_PORT"),
+			Address: os.Getenv("WEB_BIND_ADDRESS"),
 		},
 	}
 
@@ -83,4 +90,29 @@ func getEnvBool(key string) bool {
 	default:
 		return false
 	}
+}
+
+func parseMappings() map[string]string {
+	mappings := make(map[string]string)
+
+	for _, env := range os.Environ() {
+		if !strings.HasPrefix(env, "MEDIA_REWARD_") {
+			continue
+		}
+
+		pair := strings.SplitN(env, "=", 2)
+		if len(pair) != 2 {
+			continue
+		}
+
+		key := pair[0]
+		value := pair[1]
+
+		rewardName := strings.TrimPrefix(key, "MEDIA_REWARD_")
+		rewardName = strings.ReplaceAll(rewardName, "_", " ")
+
+		mappings[rewardName] = value
+	}
+
+	return mappings
 }

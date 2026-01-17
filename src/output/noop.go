@@ -14,8 +14,10 @@ func BuildNoop(l *logger.Logger) Device {
 	}
 }
 
-func (d NoopDevice) Toggle() error {
+func (d NoopDevice) Toggle(input ToggleInput) error {
 	d.logger.Info("Noop: Toggle")
+	d.logger.Info("User: %s", input.User)
+	d.logger.Info("Redeem: %s", input.RedeemName)
 
 	return nil
 }
