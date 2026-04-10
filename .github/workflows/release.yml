@@ -1,0 +1,75 @@
+name: Release
+
+on:
+  workflow_run:
+    workflows: [ "CI" ]
+    branches: [ main ]
+    types: [ completed ]
+
+jobs:
+  release:
+    name: Create Release
+    runs-on: ubuntu-latest
+    if: github.event.workflow_run.conclusion == 'success'
+    permissions:
+      contents: write
+      pull-requests: read
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Get next version
+        id: version
+        run: |
+          LATEST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "v0.0.0")
+          VERSION=${LATEST_TAG#v}
+          IFS='.' read -r MAJOR MINOR PATCH <<< "$VERSION"
+          
+          HEAD_SHA="${{ github.event.workflow_run.head_sha }}"
+          PR_DATA=$(gh api "repos/${{ github.repository }}/commits/${HEAD_SHA}/pulls" 2>/dev/null || echo "[]")
+          PR_TITLE=$(echo "$PR_DATA" | jq -r '.[0].title // ""')
+          PR_BODY_FIRST=$(echo "$PR_DATA" | jq -r '.[0].body // ""' | head -1)
+          
+          starts_with() { echo "$1" | grep -qiE "^\[$2\]"; }
+          fixed_version() { echo "$1" | grep -oiE '^\[v[0-9]+\.[0-9]+\.[0-9]+\]' | tr -d '[]'; }
+          is_bump() { starts_with "$PR_TITLE" "$1" || starts_with "$PR_BODY_FIRST" "$1"; }
+          
+          FIXED=$(fixed_version "$PR_TITLE")
+          [ -z "$FIXED" ] && FIXED=$(fixed_version "$PR_BODY_FIRST")
+          
+          if [ -n "$FIXED" ]; then
+            echo "version=${FIXED}" >> $GITHUB_OUTPUT
+          elif is_bump "major"; then
+            echo "version=v$((MAJOR + 1)).0.0" >> $GITHUB_OUTPUT
+          elif is_bump "minor"; then
+            echo "version=v${MAJOR}.$((MINOR + 1)).0" >> $GITHUB_OUTPUT
+          else
+            echo "version=v${MAJOR}.${MINOR}.$((PATCH + 1))" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Create Git tag
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git tag ${{ steps.version.outputs.version }}
+          git push origin ${{ steps.version.outputs.version }}
+
+      - name: Download artifact from CI
+        uses: actions/download-artifact@v4
+        with:
+          name: artifact
+          run-id: ${{ github.event.workflow_run.id }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Rename artifact
+        run: mv out artifact_${{ steps.version.outputs.version }}
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.version.outputs.version }}
+          name: Release ${{ steps.version.outputs.version }}
+          files: artifact_${{ steps.version.outputs.version }}
+          generate_release_notes: true

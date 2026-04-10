@@ -1,5 +1,10 @@
 package output
 
 type Device interface {
-	Toggle() error
+	Toggle(ToggleInput) error
+}
+
+type ToggleInput struct {
+	User       string
+	RedeemName string
 }

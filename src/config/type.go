@@ -24,14 +24,21 @@ type Twitch struct {
 }
 
 type Output struct {
-	Type string
-	Tapo Tapo
+	Type  string
+	Tapo  Tapo
+	Media Media
 }
 
 type Tapo struct {
-	IP       string
-	Username string
-	Password string
+	IP          string
+	Username    string
+	Password    string
+	TriggerWord string
+}
+
+type Media struct {
+	Port     int
+	Mappings map[string]string
 }
 
 type GPIO struct {
@@ -48,6 +55,7 @@ type Logging struct {
 type Web struct {
 	Enabled bool
 	Port    string
+	Address string
 }
 
 type Config struct {

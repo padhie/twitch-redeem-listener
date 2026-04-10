@@ -7,15 +7,17 @@ import (
 	"net/http"
 	"time"
 	"twitch-redeem-trigger/src/config"
+	"twitch-redeem-trigger/src/gpio"
 	"twitch-redeem-trigger/src/logger"
 )
 
 type Tapo struct {
-	IP       string
-	Username string
-	Password string
-	Client   *http.Client
-	logger   *logger.Logger
+	IP          string
+	Username    string
+	Password    string
+	Client      *http.Client
+	TriggerWord string
+	logger      *logger.Logger
 }
 
 func BuildTapo(cfgTapo config.Tapo, l *logger.Logger) Device {
@@ -26,11 +28,20 @@ func BuildTapo(cfgTapo config.Tapo, l *logger.Logger) Device {
 		Client: &http.Client{
 			Timeout: 10 * time.Second,
 		},
-		logger: l,
+		TriggerWord: cfgTapo.TriggerWord,
+		logger:      l,
 	}
 }
 
-func (d *Tapo) Toggle() error {
+func (d *Tapo) Toggle(input ToggleInput) error {
+	if input.RedeemName == d.TriggerWord {
+	}
+
+	d.logger.Info("Target redeem triggered: %s", input.RedeemName)
+
+	// LED für Tapo blinken lassen
+	go gpio.BlinkLED(gpio.TapoLED, 3*time.Second)
+
 	// 1. Anmeldung (vereinfacht)
 	loginURL := fmt.Sprintf("http://%s", d.IP)
 	loginPayload := map[string]interface{}{
